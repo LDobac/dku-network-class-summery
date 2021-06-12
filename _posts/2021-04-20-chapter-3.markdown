@@ -5,3 +5,144 @@ date:   2021-04-20 10:10:43 +0900
 categories: jekyll update
 ---
 
+## 전송층(Transport Layer)
+OSI 7 Layer의 4계층인 전송층(Transport Layer)는 응용 프로세스간 논리적인 터널을 이용한 통신을 제공한다. 전송층의 프로토콜은 각 종단점(응용 프로세스)에서 동작하는 종단 시스템이다.
+
+하위 계층 3계층인 네트워크 계층 또한 논리적인 통신을 제공하지만, host-to-host 연결을 제공하지만, 전송층은 process-to-process로 한 host내에 다수의 프로세스의 연결을 지원할 수 있다.
+
+전송층에는 크게 신뢰성과 순서성을 보장하는 TCP와 비신뢰성, 비연결성인 UDP 등 프로토콜이 있다.
+
+### 다중화(Multiplexing)
+전송층은 process-to-process간의 논리적인 연결을 지원하는 프로토콜이기 때문에 하나의 host내에 다수의 프로세스가 존재한다. 일반적으로 컴퓨터에는 하나의 네트워크 회선이 연결되니 다수의 프로세스가 전송하는 데이터에 대해서 하나의 데이터로 통합할 필요가 있다.
+
+## UDP(User Datagram Protocol)
+UDP는 데이터 전송을 위한 최소한의 기능만 제공하기 때문에 데이터 손실이나 순서에 대한 보장이 지원되지 않는다. 또한 비연결성 프로토콜이기 때문에 연결 과정에서 신뢰성 있는 연결 상태를 보장하지 않는다.
+
+신뢰성을 보장하지 않지만, 최소한의 기능 지원 덕분에 빠른 속도를 제공할 수 있으며 일반적으로 비디오/오디오 스트리밍, DNS, SNMP와 같이 속도가 빨라야하고 신뢰성이 낮아도 되는 곳에 사용된다.
+
+### UDP 헤더
+![UDP Header](https://blog.kakaocdn.net/dn/bRTdQx/btqyWLhV8D9/2AWL5Fj2OGJ1VGDTeQQ6l1/img.gif)
+
+UDP의 헤더의 구조는 매우 간단한다. 출발지 포트, 목적지 포트, 총 길이, 체크섬밖에 없기 때문에 낮은 신뢰성을 보장하는 대신 높은 속도를 제공할 수 있다.
+
+#### Checksum
+체크섬은 일반적으로 데이터에 오류가 있는지 확인하기 위해 사용되는 기법으로 에러가 있는지만 확인이 가능하지 수정은 불가능하다.
+
+![UDP Checksum](https://you.stonybrook.edu/ylatif/files/2016/04/internet-checksum-example-2a544mv.png)
+
+체크섬을 계산하는 방법은 단순히 16bit 단위로 데이터를 모두 더하면서 계산한다. 목적지에서 다시 체크섬을 계산했을 때 전송된 체크섬과 다르다면 데이터에 손실/변형이 발생한 것이다.
+
+## TCP(Transmission Control Protocol)
+TCP는 UDP와 다르게 연결성 프로토콜이며 전송 과정의 신뢰성과 순서성을 보장하는 프로토콜이다. 먼저 어떻게 신뢰성을 보장하는지 먼저 알아보자.
+
+### 신뢰성 전송 원리
+프로토콜의 진화에 따라 어떻게 신뢰성 전송 원리가 보장되는지 FSM(Finite State Machine)을 통해 확인해보겠다.
+
+#### rdt 1.0
+rdt 1.0은 sender와 receiver의 연결 채널이 어떠한 손실과 오류가 발생할 수 없는 완전한 신뢰성을 보장하는 채널인 경우이다.
+![rdt 1.0](https://mblogthumb-phinf.pstatic.net/MjAxOTEwMTFfMTMy/MDAxNTcwNzY2NTE3ODk0.Coi7G5R9YBo8wDW8vI4ybMzFSJrR-D-UcmV6dvqOejUg.YpsyBbBi9XUj4gna-3ObqBnvI57zrzcBWneNLtdoAAIg.PNG.sjc02183/image.png?type=w800)
+
+단순히 sender는 패킷을 전송하고 receiver는 패킷을 수신한다.
+
+이러한 완전한 신뢰성을 보장하는 채널은 현실적으로 불가능하다.
+
+#### rdt 2.0
+rdt 2.0의 채널은 데이터의 오류가 발생할 수 있다. 
+
+체크섬을 통한 에러를 검출할 수 있으며 receiver는 ACK(전송 긍정), NAK(전송 부정)을 통한 피드백을 반환한다. 그리고 NAK가 발생하면 sender는 해당 패킷을 재전송한다.
+
+![rdt 2.0](https://mblogthumb-phinf.pstatic.net/MjAxOTEwMTdfMjUw/MDAxNTcxMjg3NDc4NzIx.XisixdJgocgLqsSitdnR9FTu5fxQ_U8AILGJ-Zhidoog.Kj7bYYnlrEVVzSLtuRKcBIKICQSyak2EBZ0yfc9NXLMg.PNG.sjc02183/image.png?type=w800)
+
+rdt 2.0은 에러가 발생하면 재전송한다는 개념이 추가되었으며 전송에 대한 신뢰성이 보장되기 시작한다.
+
+하지만 수신자의 응답을 기다리고 전송/재전송하는 전송 후 대기(Stop-and-Wait) 형태를 구현하기 때문에 속도가 느리며, ACK, NAK가 손실되었을 때, 중복 되었을 때에 대해서 처리가 구현되어 있지 않다.
+
+
+#### rdt 2.1
+rdt 2.1은 기존의 ACK, NAK의 오류를 항상 확인하며, Stop-and-Wait 대신 패킷 번호 값(seq)을 사용하여 수신측에서 패킷을 수신하면 ACK,NAK피드백과 함께 seq 값을 전달한다.
+
+![rdt 2.1 sender](https://yansigit.github.io/blog/computer-network-rdt-and-pipelined-protocols/Untitled%204.png)
+
+![rdt 2.1 receiver](https://yansigit.github.io/blog/computer-network-rdt-and-pipelined-protocols/Untitled%205.png)
+
+#### rdt 2.2
+rdt 2.1과 동일하나, NAK를 사용하지 않고 전송 성공시 패킷 번호와 함께 ACK 패킷을 전송하는 방법을 사용한다.
+
+#### rdt 3.0
+rdt 3.0의 채널은 데이터의 오류뿐만 아니라 손실이 발생할 수도 있다. 때문에 rdt 3.0은 손실 검출과 관련된 행동을 정의한다.
+
+패킷이 손실되었는지 아니면 아직 도착하지 않은건지 확인을 위해 패킷 손실을 나타내는 타이머가 필요하다.
+
+![rdt 3.0 sender](https://blog.kakaocdn.net/dn/cLOcfa/btqJ3hwSc5Q/mzknpXhtnXthjFsnZve9Rk/img.png)
+
+sender는 패킷이 전송되고 나면 타이머를 시작하여 ACK가 반환될 때 까지 기다린다. ACK가 반환되면 타이머를 정지하며, 반환되지 않으면 패킷이 손실 된 것으로 판단한다.
+
+![rdt 3.0 sender timer](https://blog.kakaocdn.net/dn/M2C9Z/btqvqNqkyln/Ho6sD4W4vySy1e7D7kTA91/img.gif)
+
+위와 같이 패킷이 손실되어서 전송이 실패되면 패킷을 재전송해야 한다.
+
+#### 패킷 재전송
+패킷을 재전송하는 방법은 다양한 방법이 존재한다.
+
+1. Stop-and-Wait : rdt 2.0과 동일하게 패킷이 전송 된 후 ACK가 올때까지 기다렸다가 상황에 따라 패킷을 전송하는 방법이다. 모든 패킷에 대해 응답이 올때까지 기다려야 하기 때문에 효율이 매우 안나오게 된다.
+
+2. Go-back-N : sender는 ACK를 기다리지 않고 다수의 패킷을 동시에 전달할 수 있다. 가장 오래된 패킷에 대해서만 하나의 timer를 사용하며 이후의 패킷에 대해 손실이 발생하면 오래된 패킷부터 전부 재전송한다.
+
+3. Selective-Repeat : 모든 패킷에 대해 각각의 타이머를 설정하여 손실이 발생한 패킷에 대해서만 재전송한다.
+
+### TCP 개요
+TCP는 point-to-point(1:1)로 논리적인 채널을 연결하는 프로토콜이다. 신뢰성, 순서성을 제공한다.
+
+연결성 프로토콜로 Full duplex 통신이 가능하다.
+
+#### TCP 헤더
+![TCP Header](https://www.gatevidyalay.com/wp-content/uploads/2018/09/TCP-Header-Format.png)
+
+TCP 헤더는 UDP 해더에 비해 훨씬 복잡한 형태이다. 출발지, 목적지 주소뿐만 아니라 rdt2.1에서 표현되는 패킷 번호(Sequence number)와 응답 번호(Ack Number), 그리고 상태 플래그들이 존재한다.
+
+또한 Window Size라는 값이 존재한다. Window는 한번에 전송, 수신시 사용되는 최대 패킷의 크기로 프로세스에서 최대로 전송/수신 가능한 크기를 결정할 수 있으며 TCP의 흐름제어에 사용된다.
+
+Sequence Number는 전송하는 세그멘트 숫자를 나타내며, Ack Number는 응답시 전송되는 숫자로 다음 전송되길 원하는 세그멘트의 숫자를 말한다.
+
+### TCP 흐름 제어
+흐름 제어는 sender, receiver간 처리 속도 차이에 대해서 제어하기 위한 기법이다.
+
+sender가 receiver가 처리할 수 있는 속도를 넘거나, 너무 느리게 데이터를 전송하면 흐름 제어를 통해 receiver가 처리할 수 있도록 전송 속도를 조절할 필요가 있다.
+
+### TCP 연결 과정
+TCP는 연결성 프로토콜로 연결에 대한 신뢰성이 보장되어야 하며, TCP가 연결/해제되는 과정을 handshake라고 한다.
+
+#### 2-way handshake
+![2-way handshake](https://www.researchgate.net/profile/Florian-Adamsky/publication/280878634/figure/fig2/AS:613864370618372@1523368079094/Two-way-handshake-to-initiate-a-connection-between-two-uTP-nodes-The-text-on-the-outer.png)
+
+2-way handshake는 단순한 형태의 연결 과정으로 Client가 연결을 요청하면 Server에서는 연결이 되었다는 값만 전달하면 연결이 수립되는 방법이다.
+
+
+하지만 2-way handshake는 TCP 연결 수립 과정에서는 사용되지 않는다.
+![2-way handshake failure](https://mblogthumb-phinf.pstatic.net/MjAxOTEwMDlfMTg2/MDAxNTcwNTg4OTEzNzMx.OMXPWMs9VS5CfuMOIr-nEcNSw1d268F3oobs6X0hAVEg.i75pv-KDIE6e0dNd_wqU2w1mty2wQDhzanWWc9UR2xIg.PNG.nywoo19/image.png?type=w800)
+
+서버에서 연결되었다는 SYNC 값이 전달된 후 서버는 해당 데이터가 전달이 잘 되었는데 안되었는지 확인할 수 없다. 만약 클라이언트에서 다시 연결 신호를 보낸다 하더라도 서버는 이전에 있던 연결인지 제대로 알 수 없다. TCP의 양방향 신뢰성 연결을 보장할 수 없게 된다.
+
+#### 3-way handshake
+![3 way handshake](https://www.mdpi.com/applsci/applsci-06-00358/article_deploy/html/images/applsci-06-00358-g001.png)
+
+3-way handshake는 2-way handshake 과정에서 클라이언트가 연결되었음을 확인하는 응답까지 추가된 연결 과정이다.
+
+클라이언트와 서버간의 연결성을 보장하기 때문에 연결 시 3-way handshake를 이용해 TCP 연결을 수립한다.
+
+#### 4-way handshake
+3-way handshake 과정은 TCP 연결이 수립되는 과정이면 4-way handshake는 TCP 연결이 종료될 때 사용되는 방법이다.
+
+![4-way handshake](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FqUXSw%2FbtqDWsFNWJw%2FhVdKIneSYb7UK3wc0pj6Z0%2Fimg.png)
+
+클라이언트에서 연결 종료 패킷을 전송하면 서버에서 ACK 메시지를 전송한다.
+그리고 바로 클라이언트에서는 연결을 종료하는 것이아니라 서버에서 미처 전송하지 못한 데이터를 모두 수신받고 서버에서 최종 종료 패킷을 전송하면 확인 패킷을 전송하여 최종적으로 TCP 연결을 종료한다.
+
+### TCP 혼잡 제어
+흐름 제어는 sender와 receiver의 처리 속도에 관한 처리 기법이라면 혼잡 제어는 네트워크 트래픽의 혼잡도에 대해서 패킷의 전송량에 대한 처리 기법이다.
+
+![AIMD](https://www.researchgate.net/profile/Noura-Al-Hoqani/publication/281646945/figure/fig1/AS:284521166589954@1444846540669/TCP-congestion-control-AIMD-mechanism.png)
+
+AIMD(Additive Increase/Multiplicative Decrease)는 TCP 혼잡 제어의 기본 아이디어이다.
+
+패킷 전송시 천천히 패킷의 전송량을 늘린다.(Addittive Increase) 만약 네트워크가 혼잡해져 패킷의 손실이 발생하면 패킷의 전송량을 배수로 줄인다.(Multiplicative Decrease)
