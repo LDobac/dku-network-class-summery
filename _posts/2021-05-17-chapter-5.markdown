@@ -1,0 +1,75 @@
+---
+layout: post
+title:  "Chapter 5 : Network Layer: The Control Plane"
+date:   2021-05-17 10:10:43 +0900
+categories: jekyll update
+---
+
+## 네트워크 계층(Network Layer) : Control Plane
+네트워크 계층의 Control Plane(컨트롤 영역)은 네트워크에 대한 로직과 토폴로지, 데이터그램의 구조등을 나타내는 영역이다.
+
+패킷을 포워딩 하는 방법이 Data Plane이면, 패킷을 전달하는 방법과 과정에 대해 정의하는 것이 Control Plane이다.
+
+### Link state routing protocol(링크 상태 라우팅 프로토콜)
+각 라우터들은 네트워크의 토폴로지와 링크 상태를 저장하며, 네트워크의 상태를 이용해서 목적지까지 최적 경로를 계산한다.
+
+한 네트워크 내 라우터의 정보가 변화하면 LSA(Link State Advertisement)를 생성하여 네트워크내 라우터에게 전파한다.
+
+각 라우터는 전파받은 LSA를 기초로 네트워크의 토폴로지를 계산하고 최적 경로를 계산한다.
+
+- LSA : 나와 연결된 이웃 라우터의 정보 및 링크 정보(연결 정보, 비용, 상황)
+
+네트워크 내 최적의 라우터 경로를 탐색하기 위해 그래프 경로 찾기 알고리즘을 적용할 수 있다.
+
+#### Dijkstra's Algorithm(다익스트라 알고리즘)
+다익스트라 알고리즘은 그래프에서 정점간 최단 경로를 찾는 알고리즘이다.
+
+#### Distance vector Algorithm
+Distance vector 알고리즘은 주변 라우터로부터 상태 정보를 이용해 거리 정보를 갱신한다. 이웃 라우터로부터 최적 경로 정보를 받아 각 네트워크에 대한 최적 경로를 갱신한다.
+
+이웃 라우터로부터 전달받는 경로 정보에는 거리 경로와 방향 정보가 넘어온다.
+
+## Intra-AS
+네트워크는 아주 많은 subnet들로 이루어진 집합이다. 각각의 네트워크끼리 다른 라우터, 다른 형태의 토폴로지를 가진 네트워크들이 무수히 많기 때문에 각 네트워크끼리 통신할 때 프로토콜이 필요하다.
+
+- AS : 한 기관에서 관리하는 동일한 네트워크 ID를 가진 라우터의 집합
+
+Intra-AS 라우팅은 하나의 AS내의 호스트와 라우터 간 라우팅 방식에 대한 프로토콜이다.
+
+Interconnected-AS 라우팅은 다른 AS간의 라우팅 방식에 대한 프로토콜을 정의한다.
+
+- IGP(Interior Gateway Protocol) : AS내에서 사용되는 라우팅 알고리즘
+    - RIP (Distance Vector 방식)
+    - OSPF (Link state 방식)
+- EGP(Exterior Gateway Protocol) : AS간에서 사용되는 라우팅 알고리즘
+
+## Interconnected-AS
+AS내에서는 라우터간 상태와 경로를 공유해서 라우팅을 할 수 있지만, 완전히 AS로 라우팅을 할 때 경로를 생성할 수 있도록 AS 간 경로를 찾을 수 있는 프로토콜이 필요하다.
+
+### BGP(Border Gateway Protocol)
+BGP는 게이트웨이를 통해 AS간 경로를 찾을 수 있도록 정보를 공유하는 프로토콜이다.
+- eBGP : AS의 게이트웨이간 데이터 통신 프로토콜이다.
+- iBGP : 게이트웨이와 AS의 내부 라우터간 프로토콜이다.
+
+## SDN(Software defined networking)
+고전적인 네트워크 Control Plane은 각 개별 vendor의 라우터의 프로토콜에 의존해야 했기에 네트워크 트래픽의 경로를 분산하거나, 다른 라우팅 알고리즘을 적용하기가 힘들다.
+
+SDN은 OpenFlow API를 통해 네트워크의 트래픽 관리를 소프트웨어적으로 접근하여 처리할 수 있도록 하는 방식이다.
+
+### OpenFlow
+OpenFlow는 네트워크의 스위치나 Plane에 대해서 네트워크 패킷의 경로를 수정하거나 질의할 수 있는 프로토콜이다.
+
+## ICMP(Internet Control Message Protocol)
+ICMP는 IP의 통신에서 사용되는 진단, 제어를 응답으로 반환하는 프로토콜이다.
+
+ICMP 헤더에 타입과 코드를 삽입해 전달되는 호스트에서 해당 메시지의 내용을 검사해 적절한 진단 응답 메시지를 생성해 전송지로 반환한다.
+
+Traceroute ICMP의 경우 IP 헤더의 TTL(Time to live) 필드를 이용해 라우터를 거칠때 마다 1씩 감소시키며 전송 과정을 추적한다.
+
+## SNMP(Simple Network Management Protocol)
+SNMP는 IP 네트워크를 관리하기 위해 정보를 수집하고 장치를 조작하는데 사용되는 프로토콜이다. SNMP의 동작 구조는 아래와 같다.
+![SNMP](https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/SNMP_communication_principles_diagram.PNG/750px-SNMP_communication_principles_diagram.PNG)
+
+SNMP를 이용해 네트워크 장치를 관리하는 개체를 Manager라고 하며, 관리를 받는 장치(Managed Device)에서 실행되는 소프트웨어를 Agent라한다.
+
+Manager는 명령을 통해 각 Agent에게 명령을 전달하여 정보를 수집, 전달한다.
