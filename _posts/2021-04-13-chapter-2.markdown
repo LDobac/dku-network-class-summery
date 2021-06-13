@@ -19,7 +19,7 @@ TCP/IP, HTTP, FTP 등 데이터를 통신 하기 위해 미리 약속한 통신 
 
 이러한 프로토콜들의 디자인과 통신 방식을 계층으로 나누어 설명한 모델을 [OSI 7 Layer][2]라 말한다.
 
-![OSI 7 Layer with TCP/IP 4 Layer](/assets/layer.jpg)
+![OSI 7 Layer with TCP/IP 4 Layer](/dku-network-class-summery/assets/layer.jpg)
 
 왼쪽 모델이 OSI 7 Layer이다.
 각각 하위 계층 부터 물리(Physical), 데이터 링크(Datalink), 네트워크(Network), 전송(Transport), 세션(Session), 표현(Presentation), 응용(Application) 계층으로 분류된다.
@@ -28,7 +28,7 @@ TCP/IP, HTTP, FTP 등 데이터를 통신 하기 위해 미리 약속한 통신 
 
 현재 컴퓨터 네트워크에서 가장 많이 사용되고 기반이 되는 프로토콜은 TCP/IP이다. 때문에 오른쪽 모델은 TCP/IP의 관점에서 기존의 OSI 7 Layer를 4 Layer로 분류하여 표현하였다. 좀 더 추상적인 모델이라 할 수 있다.
 
-![TCP/IP 4 Layer Protocol](/assets/layer_protocol.png)
+![TCP/IP 4 Layer Protocol](/dku-network-class-summery/assets/layer_protocol.png)
 
 위 사진은 인터넷 프로토콜을 특징과 디자인에 따라 TCP/IP 4 Layer로 분류한 것이다. 단순히 분류한 것만 생각하면 굳이 계층형태로 분류할 필요성이 있을까 싶다.
 
@@ -49,11 +49,11 @@ TCP/IP, HTTP, FTP 등 데이터를 통신 하기 위해 미리 약속한 통신 
 
 대표적인 예로 웹 사이트 개발을 들자면, HTML/Javascript/CSS와 같은 프론트 엔드 개발 언어들을 예로 들 수 있을것이다.
 
-![HTML/Javascript/CSS](https://jkkim09.github.io/assets/images//posts/front-end/top.jpg)
+![HTML/Javascript/CSS](https://jkkim09.github.io/dku-network-class-summery/assets/images//posts/front-end/top.jpg)
 
 이외에도 Database Server, Web Server, Distribution Server등 인터넷의 발전에 따라 네트워크를 이용한 많은 형태의 서비스와 개발 툴이 등장하고 있다.
 
-![Backend Roadmap](/assets/backend_roadmap.png)
+![Backend Roadmap](/dku-network-class-summery/assets/backend_roadmap.png)
 *[출처][3]*
 
 ## Architectures
@@ -133,7 +133,7 @@ IPC는 Inter-Process Communication의 줄임말로, 한국말로 프로세스간
 
 실제 전기적인 소켓처럼 IPC를 위한 소켓 또한 서버와 *연결*하여 데이터를 *공급*받는다고 할 수 있다.
 
-![Network Socket](/assets/network_socket.png)
+![Network Socket](/dku-network-class-summery/assets/network_socket.png)
 *Network Socket*
 
 소켓은 응용 계층에서 하위 계층에 대해서 추상화를 한 자료 구조의 일종이라 볼 수 있다.

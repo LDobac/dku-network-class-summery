@@ -86,7 +86,7 @@ IP 주소는 네트워크의 주소를 찾기 위한 주소이지만, 최종 호
 ARP는 네트워크 내의 IP를 이용해 MAC 주소를 조회하는 프로토콜이다. 
 
 #### ARP 동작 과정
-![ARP](https://gsephrioth.github.io/assets/img/TCP-IP/Figure7.3.png)
+![ARP](https://gsephrioth.github.io/dku-network-class-summery/assets/img/TCP-IP/Figure7.3.png)
 
 1. 네트워크에서 ARP 패킷을 Boardcast한다.
 2. 타겟 호스트가 본인의 IP를 Broadcast한다.

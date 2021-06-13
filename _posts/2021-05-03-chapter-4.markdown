@@ -14,7 +14,7 @@ categories: jekyll update
 - Control plane : 네트워크 전반적인 로직으로 데이터그램과 네트워크의 토폴로지를 결정하는 영역이다.
 
 ### 라우터의 작동 과정
-![router-architecture](/assets/router_architecture.PNG)
+![router-architecture](/dku-network-class-summery/assets/router_architecture.PNG)
 
 라우터의 input port에서 패킷 입력들어오면 라우터에서 해당 패킷을 분석 후 적절한 output으로 전송한다.
 

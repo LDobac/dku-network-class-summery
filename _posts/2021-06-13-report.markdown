@@ -119,12 +119,12 @@ if __name__ == "__main__":
 
 ### 실행 예제
 #### 서버
-![server example](/assets/report/1.PNG)
+![server example](/dku-network-class-summery/assets/report/1.PNG)
 
 서버를 실행시켜 서버의 IP, Port, 영화관의 이름을 입력하여 서버를 가동한다.
 
 #### 클라이언트
-![client example](/assets/report/2.PNG)
+![client example](/dku-network-class-summery/assets/report/2.PNG)
 
 가동 중인 서버의 IP, port주소를 입력하면 서버의 영화관 이름이 반환된다.
 
@@ -232,27 +232,27 @@ if __name__ == "__main__":
 
 ### 실행 예제
 #### 서버
-![report2 server example](/assets/report/3.PNG)
+![report2 server example](/dku-network-class-summery/assets/report/3.PNG)
 
 파이썬 스크립트를 실행시켜 서버의 주소, 포트 번호를 입력하여 서버를 구동한다.
 
 #### 클라이언트
-![report2 client example](/assets/report/4.PNG)
+![report2 client example](/dku-network-class-summery/assets/report/4.PNG)
 
 클라이언트도 서버와 동일하게 스크립트를 실행시켜 서버의 IP주소와 포트 번호를 입력하여 서버를 구동한다.
 
-![report2 client example2](/assets/report/5.PNG)
+![report2 client example2](/dku-network-class-summery/assets/report/5.PNG)
 
 회원 가입 메뉴를 이용해 id, password를 서버로 전송하여 회원 가입 과정을 진행한다.
 
-![report2 client example3](/assets/report/6.PNG)
+![report2 client example3](/dku-network-class-summery/assets/report/6.PNG)
 
 만약 id가 중복된다면 기 가입된 사용자로 가입 실패 메시지를 전송한다.
 
-![report2 client example4](/assets/report/7.PNG)
+![report2 client example4](/dku-network-class-summery/assets/report/7.PNG)
 
 로그인 메뉴를 통해 기 가입자의 로그인을 진행한다.
 
-![report2 client example4](/assets/report/8.PNG)
+![report2 client example4](/dku-network-class-summery/assets/report/8.PNG)
 
 만약 기가입자가 아니라면 로그인 실패 메시지를 전송한다.
