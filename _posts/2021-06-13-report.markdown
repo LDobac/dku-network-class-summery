@@ -1,0 +1,258 @@
+---
+layout: post
+title:  "과제"
+date:   2021-06-13 14:06:43 +0900
+categories: jekyll update
+---
+
+## 과제 1 : 영화관 예약 시스템
+```python
+import socket
+
+def ClientMain(server : str, port : int):
+    # SOCK_STREAM : TCP 전송 프로토콜 사용
+    # AF_INET : IPv4 주소 체계 사용
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    s.connect((server, port))
+
+    cinemaName = s.recv(1024)
+    print(f"{cinemaName.decode()} 영화관에 어서오세요")
+
+    cinema = input("조회 할 영화 이름을 입력하시오 : ")
+    s.sendall(f"Q{cinema}".encode())
+
+    cinemaState = s.recv(1024).decode()
+
+    if cinemaState == "SUCCESS":
+        seatNumber = input("예약 할 좌석 번호를 입력하시오 : ")
+        s.sendall(f"R{seatNumber}".encode())
+
+        result = s.recv(1024).decode()
+
+        print(f"예약 상태 {result}")
+        
+        pass
+    else:
+        print("좌석이 없습니다.")
+        pass
+
+    s.sendall("E".encode())
+
+    s.close()
+
+def ServerMain(host : str, hostname : str, port : int):
+    cinemaReservedList = {
+        "영화 A" : [0,0,0,0,0],
+        "영화 B" : [0,0,0,0,0],
+        "영화 C" : [0,0,0,0,0],
+        "영화 D" : [0,0,0,0,0],
+        "영화 E" : [0,0,0,0,0],
+    }
+    curCinemaName = ""
+
+    # SOCK_STREAM : TCP 전송 프로토콜 사용
+    # AF_INET : IPv4 주소 체계 사용
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    # Server socket을 port에 binding한다
+    s.bind((host, port))
+
+    s.listen()
+
+    while True:
+        clientSocket, clientAddr = s.accept()
+
+        print(f"클라이언트가 연결되었습니다 : {clientAddr}")
+
+        clientSocket.sendall(hostname.encode())
+
+        while True:
+            recv = clientSocket.recv(1024).decode()
+
+            command = recv[0:1]
+            value = recv[1:]
+
+            print(f"전달받은 메시지 : {recv}")
+
+            if command == "Q":
+                print("영화를 조회합니다.")
+                if value in cinemaReservedList:
+                    clientSocket.sendall("SUCCESS".encode())
+                    curCinemaName = value
+                    print("있는 영화")
+                else:
+                    clientSocket.sendall("FAIL".encode())
+                    print("없는 영화")
+            elif command == "R":
+                print(f"{curCinemaName}:{value} 예약을 확인합니다.")
+                value = int(value)
+                if value < 5 or value >= 0:
+                    if cinemaReservedList[curCinemaName][value] == 1:
+                        clientSocket.sendall("예약 실패 : 이미 예약됨".encode())
+                        print("이미 예약된 좌석")
+                    else:
+                        cinemaReservedList[curCinemaName][value] = 1
+                        clientSocket.sendall("예약 성공".encode())
+                        print("예약 성공")
+                else:
+                    clientSocket.sendall("out of index".encode())
+                    print("예약 실패")
+            elif command == "E":
+                print("클라이언트 연결이 종료되었습니다.")
+                break
+
+if __name__ == "__main__":
+    programType = input("Input <server> OR <client> : ")
+    host = input("서버 IP 주소를 입력하시오 : ")
+    port = int(input("포트 번호를 입력하시오 : "))
+
+    if programType.capitalize() == "server".capitalize():
+        hostname = input("영화관 이름을 입력하시오 : ")
+        ServerMain(host, hostname, port)
+    elif programType.capitalize() == "client".capitalize():
+        ClientMain(host, port)
+    else:
+        print("Wrong program type")
+
+```
+
+### 실행 예제
+#### 서버
+![server example](/assets/report/1.PNG)
+
+서버를 실행시켜 서버의 IP, Port, 영화관의 이름을 입력하여 서버를 가동한다.
+
+#### 클라이언트
+![client example](/assets/report/2.PNG)
+
+가동 중인 서버의 IP, port주소를 입력하면 서버의 영화관 이름이 반환된다.
+
+조회할 영화 이름과 좌석 번호를 전달하면 서버에서 예약 상태를 확인하고 빈 좌석이면 예약 성공, 아니라면 예약 실패 메시지를 전달한다.
+
+## 과제 2 : 회원가입/로그인 시스템
+```python
+import socket
+
+def ClientMain(server : str, port : int):
+    # SOCK_STREAM : TCP 전송 프로토콜 사용
+    # AF_INET : IPv4 주소 체계 사용
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    s.connect((server, port))
+
+    while True:
+        print("1. 회원가입")
+        print("2. 로그인")
+        print("3. 종료")
+        index = int(input("메뉴를 선택하시오 : "))
+
+        if index == 1:
+            id = input("ID 입력 : ")
+            password = input("PASSWORD 입력 : ")
+
+            s.sendall(f"R{id},{password}".encode())
+
+            result = s.recv(1024).decode()
+            print(f"{result}")
+        elif index == 2:
+            id = input("ID 입력 : ")
+            password = input("PASSWORD 입력 : ")
+
+            s.sendall(f"L{id},{password}".encode())
+
+            result = s.recv(1024).decode()
+            print(f"{result}")
+        elif index == 3:
+            s.sendall("E".encode())
+            break
+
+    s.close()
+
+def ServerMain(host : str, port : int):
+    userTable = dict()
+
+    # SOCK_STREAM : TCP 전송 프로토콜 사용
+    # AF_INET : IPv4 주소 체계 사용
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    # Server socket을 port에 binding한다
+    s.bind((host, port))
+
+    s.listen()
+
+    while True:
+        clientSocket, clientAddr = s.accept()
+
+        print(f"클라이언트가 연결되었습니다 : {clientAddr}")
+
+        while True:
+            recv = clientSocket.recv(1024).decode()
+
+            command = recv[0:1]
+            value = recv[1:]
+
+            print(f"전달받은 메시지 : {recv}")
+
+            if command == "R":
+                id, password = value.split(",")
+                
+                if id in userTable:
+                    clientSocket.sendall("가입 실패 : 기 가입자".encode())
+                else:
+                    userTable[id] = password
+                    clientSocket.sendall("가입 성공".encode())
+            elif command == "L":
+                id, password = value.split(",")
+
+                if id in userTable:
+                    if userTable[id] == password:
+                        clientSocket.sendall("로그인 성공".encode())
+                    else:
+                        clientSocket.sendall("로그인 실패 : 패스워드 오류".encode())
+                else:
+                    clientSocket.sendall("로그인 실패 : 미 가입자".encode())
+            elif command == "E":
+                print("클라이언트 연결이 종료되었습니다.")
+                break
+
+if __name__ == "__main__":
+    programType = input("Input <server> OR <client> : ")
+    host = input("서버 IP 주소를 입력하시오 : ")
+    port = int(input("포트 번호를 입력하시오 : "))
+
+    if programType.capitalize() == "server".capitalize():
+        ServerMain(host, port)
+    elif programType.capitalize() == "client".capitalize():
+        ClientMain(host, port)
+    else:
+        print("Wrong program type")
+
+```
+
+### 실행 예제
+#### 서버
+![report2 server example](/assets/report/3.PNG)
+
+파이썬 스크립트를 실행시켜 서버의 주소, 포트 번호를 입력하여 서버를 구동한다.
+
+#### 클라이언트
+![report2 client example](/assets/report/4.PNG)
+
+클라이언트도 서버와 동일하게 스크립트를 실행시켜 서버의 IP주소와 포트 번호를 입력하여 서버를 구동한다.
+
+![report2 client example2](/assets/report/5.PNG)
+
+회원 가입 메뉴를 이용해 id, password를 서버로 전송하여 회원 가입 과정을 진행한다.
+
+![report2 client example3](/assets/report/6.PNG)
+
+만약 id가 중복된다면 기 가입된 사용자로 가입 실패 메시지를 전송한다.
+
+![report2 client example4](/assets/report/7.PNG)
+
+로그인 메뉴를 통해 기 가입자의 로그인을 진행한다.
+
+![report2 client example4](/assets/report/8.PNG)
+
+만약 기가입자가 아니라면 로그인 실패 메시지를 전송한다.

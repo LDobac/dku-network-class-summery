@@ -1,0 +1,62 @@
+---
+layout: post
+title:  "Chapter 7 : Wireless and Mobile Networks"
+date:   2021-05-31 10:10:43 +0900
+categories: jekyll update
+---
+
+## 무선(Wireless)
+무선은 거리가 멀어질수록 신호가 약해지며 많은 기기의 사용으로 신호 간섭과 구조물로 인한 신호 방해가 심함.
+
+따라서 강력한 오류 검출, 재전송 기술이 필요하다.
+
+### SNR(Signal-to-Noise Ratio) - 신호 대비 잡음 비율
+신호의 세기에 대한 잡음의 비율을 말한다. 신호의 세기가 세질수록 SNR이 커지게 된다. SNR이 커질수록 잡음을 제거하기 쉽다.
+
+SNR이 높아질수록 출력 세기가 높아지므로 전력의 소모량이 커지게 된다.
+
+### IEEE 802.11 Wireless LAN(wifi)
+흔히 사용하는 WIFI에 대한 표준이다. 
+
+- AP(Access Point) : 무선 인터넷을 접근할 수 있는 장치(공유기)
+- BSS(Basic Service Set) : AS와 같이 호스트와 네트워크의 집합
+
+### 802.15 (Bluetooth)
+블루투스는 짧은 거리(10m)에서 무선으로 통신할 수 있는 기술이다. 키보드, 헤드셋, 마우스와 같은 장치들의 유선 장치를 무선 장치로 이용할 수 있도록 정의한 기술이다.
+
+Master와 Slave의 구조로 설계되었다.
+
+## Cellular Internet Access
+셀룰러 네트워크 토폴로지는 최대한 가용성을 늘리기 위해 사용되는 구조이다. 셀은 6각형 형태를 갖도록 하여 최대한 오밀조밀하게 커버할 수 있도록 한다.
+![Cellular](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Frequency_reuse.svg/400px-Frequency_reuse.svg.png)
+
+각 셀을 구성하기 위해 Base Station(기지국, BS)를 설치하며, 사용자가 셀 간 이동시 원활한 서비스를 위한 처리를 진행한다.
+
+## Mobility
+모바일 장치는 계속 이동하면서 사용하니 관리되는 기지국, 라우터가 계속해서 변동된다.
+
+- Home Network : 모바일 장치가 가입되어 있는 네트워크
+- Home Agent : 모바일 장치를 관리하는 장치
+- Visited Network : home network가 아닌 다른 network
+- Visited Agent : Visited Network의 agent
+- Care-of-address : Visited Network의 ip 주소
+
+모바일 장치가 이동할 때 마다 새로 연결하고 라우팅 테이블에 기록하면 많은 overhead가 발생함. 이를 해결하기 위해 간접 라우팅 방식의 Mobile IP 사용
+
+### Mobile IP
+![Mobile ip](https://img1.daumcdn.net/thumb/R800x0/?scode=mtistory2&fname=https%3A%2F%2Ft1.daumcdn.net%2Fcfile%2Ftistory%2F21130533572929BE1B)
+
+#### Mobile IP 연결 과정
+1. Agent Discovery : Home Agent와 Foreign agent간의 정보 교류 후, COA 할당
+2. Registeration : Foreign Agent가 할당한 정보를 Home Agent에게 알림, Home Agent는 모바일 장치의 위치를 인식할 수 있음
+3. Indirect Routing : Home network의 주소에 COA를 덧붙이면서 최종적으로 모바일 장치를 찾아감
+
+Mobile IP는 간접 라우팅 방식이기 때문에 비효율적일 수 있다.
+
+#### direct routing 방식
+송신자가 수신자의 COA를 Home Agent를 통해 직접 조회해 송신자가 알아서 Foreign Agent를 거쳐서 수신자에게 전달한다.
+
+### Handoff
+현재 위치하는 기지국을 새로운 기지국으로 교체되는 과정이다. 신호가 약한 기지국 대신 신호가 강한 기지국으로 교환한다.
+
+신호가 강한 기지국을 계속 선택함으로써 에너지를 절약할 수 있다. 
